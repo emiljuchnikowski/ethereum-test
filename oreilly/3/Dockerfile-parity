@@ -1,0 +1,25 @@
+FROM ubuntu:22.10
+
+RUN apt-get -y update
+
+# install git
+RUN apt-get -y install git
+
+# install golang
+RUN apt-get -y install golang
+
+# install rust
+RUN apt-get install -y \
+    build-essential \
+    curl
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | bash -s -- -y
+ENV PATH="/root/.cargo/bin:${PATH}"
+RUN cargo --help
+RUN rustup install 1.51.0 && \
+    rustup override set 1.51.0
+
+# install parity
+RUN apt-get -y install openssl libssl-dev libclang-dev libudev-dev cmake gcc g++ pkg-config file file
+RUN git clone https://github.com/openethereum/parity-ethereum
+RUN cd parity-ethereum && \
+    cargo build --release --features final
